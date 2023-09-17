@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amazonaws:aws-java-sdk-s3:1.9.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.amazonaws" artifactId="aws-java-sdk-s3" version="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-s3/1.9.0/f6cb9fab6e06448184a93967e093fac567a96e67/aws-java-sdk-s3-1.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-s3/1.9.0/7868ff5ea5b3b7e915a8ec0cd3f29accf6599bb7/aws-java-sdk-s3-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
