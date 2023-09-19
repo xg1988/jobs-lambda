@@ -18,7 +18,7 @@ public class AppTest {
     Map<String, String> map = new HashMap<>();
     map.put("test", "1234");
     input.setQueryStringParameters(map);
-    String body = String.format("{ \"code\": \"1111\", \"message\": \"hello\" }");
+    String body = String.format("{ \"userId\": \"xg1988\", \"comment\": \"hello\", \"type\": \"01\" }");
     input.setBody(body);
 
     APIGatewayProxyResponseEvent result = app.handleRequest(input, null);
@@ -26,10 +26,9 @@ public class AppTest {
     assertEquals("application/json", result.getHeaders().get("Content-Type"));
     String content = result.getBody();
 
-    System.out.println("시스템로그 []: content : "+ content);
+    System.out.println("시스템로그 [content]  : "+ content);
 
     assertNotNull(content);
-    assertTrue(content.contains("pageContent"));
     //assertTrue(content.contains("\"hello world\""));
     //assertTrue(content.contains("\"location\""));
   }

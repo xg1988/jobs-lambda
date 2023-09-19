@@ -14,6 +14,7 @@ public class Comment {
     private LocalDateTime registDt;
     private String userId;
     private String comment;
+    private String type;
 
     @DynamoDBHashKey(attributeName = "guid")
     public String getGuid() {
@@ -35,6 +36,11 @@ public class Comment {
         return comment;
     }
 
+    @DynamoDBAttribute(attributeName = "type")
+    public String getType() {
+        return type;
+    }
+
     public void setGuid(String guid) {
         this.guid = guid;
     }
@@ -49,5 +55,9 @@ public class Comment {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
