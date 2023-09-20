@@ -43,13 +43,16 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         headers.put("Content-Type",         "application/json");
         headers.put("X-Custom-Header",      "application/json");
 
+
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                                                     .withHeaders(headers);
+
         String body             = input.getBody();
         String version          = input.getVersion();
 
         System.out.println("시스템로그 [body]: " + body);
         System.out.println("시스템로그 [version]: " + version);
+        System.out.println("input -> "+ input);
         try {
             //final String pageContents = this.getPageContents("https://checkip.amazonaws.com");
             AmazonDynamoDB ddb = _connectDynamoDB();
@@ -61,7 +64,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             try {
                 Map<String, AttributeValue> item_values = new HashMap<>();
                 item_values.put("guid",             new AttributeValue(UUID.randomUUID().toString()));
-                item_values.put("registDate",       new AttributeValue(String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMDDHHMMSS")))));
+                item_values.put("registDate",       new AttributeValue(String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmm")))));
                 item_values.put("comment",          new AttributeValue(comment.getComment()));
                 item_values.put("userId",           new AttributeValue(comment.getUserId()));
                 item_values.put("type",           new AttributeValue(comment.getType()));
@@ -69,6 +72,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
                 System.out.println("시스템로그 [item_values]: " + item_values.toString());
 
                 ddb.putItem("Comment", item_values);
+
             } catch (ResourceNotFoundException e) {
                 System.out.println("시스템로그 []: " + e);
             } catch (AmazonServiceException e) {
@@ -78,8 +82,9 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
             return response
                     .withStatusCode(200)
-                    .withBody("");
+                    .withBody(comment.toString());
         } catch (Exception e) {
+            System.out.println("시스템로그 []: e : "+ e);
             return response
                     .withBody("{}")
                     .withStatusCode(500);

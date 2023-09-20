@@ -5,7 +5,7 @@ Resources:
       Timeout: 300
       MemorySize: 128
       Handler: helloworld.App
-      CodeUri: s3://jobsbucket/ea1c44eb30d717678bab8323c0b9e4ae
+      CodeUri: s3://jobsbucket/d47fda7101a017358c4f751d80744b64
       Runtime: java11
       Architectures:
       - x86_64
