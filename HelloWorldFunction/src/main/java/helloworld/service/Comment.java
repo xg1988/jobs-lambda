@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class Comment {
 
     private String guid;
-    private LocalDateTime registDt;
+    private String registDt;
     private String userId;
     private String comment;
     private String type;
@@ -22,7 +22,7 @@ public class Comment {
     }
 
     @DynamoDBRangeKey(attributeName = "registDt")
-    public LocalDateTime getRegistDt() {
+    public String getRegistDt() {
         return registDt;
     }
 
@@ -45,7 +45,7 @@ public class Comment {
         this.guid = guid;
     }
 
-    public void setRegistDt(LocalDateTime registDt) {
+    public void setRegistDt(String registDt) {
         this.registDt = registDt;
     }
 
@@ -60,4 +60,10 @@ public class Comment {
     public void setType(String type) {
         this.type = type;
     }
+
+    // comment object to json string method
+    public String toString() {
+        return "{\"guid\":\"" + guid + "\",\"registDt\":\"" + registDt + "\",\"userId\":\"" + userId + "\",\"comment\":\"" + comment + "\",\"type\":\"" + type + "\"}";
+    }
+
 }

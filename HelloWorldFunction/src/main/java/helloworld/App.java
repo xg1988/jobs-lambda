@@ -17,6 +17,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -35,12 +36,14 @@ import org.junit.Test;
  * Handler for requests to Lambda function.
  */
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type",         "application/json");
         headers.put("X-Custom-Header",      "application/json");
 
+
+        System.out.println("시스템로그 []: " + context.getClientContext().getCustom().toString());
+        System.out.println("시스템로그 []: " + context.getClientContext().getEnvironment().toString());
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
                                                     .withHeaders(headers);
@@ -58,7 +61,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         System.out.println("시스템로그 [getPath]: " + input.getPath());
 
         Object result = null;
-
+        String resultString= null;
         try {
             //final String pageContents = this.getPageContents("https://checkip.amazonaws.com");
 
@@ -66,6 +69,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
                 switch (input.getHttpMethod()){
                     case "GET":
                         result = get(body);
+                        resultString = result.toString();
                         break;
                     case "POST":
 
@@ -75,6 +79,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
                         break;
                     case "PUT":
                         result = put(body);
+                        resultString = result.toString();
                         break;
                 }
 
@@ -88,7 +93,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
             return response
                     .withStatusCode(200)
-                    .withBody(body);
+                    .withBody(resultString);
         } catch (Exception e) {
             System.out.println("시스템로그 []: e : "+ e);
             return response
@@ -97,13 +102,21 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         }
     }
 
-    private List<Comment> get(String body){
+    private String get(String body){
         AmazonDynamoDB ddb = _connectDynamoDB();
-        GetItemResult getItemResult = ddb.getItem("Comment", null);
-        System.out.println("시스템로그 []: " + getItemResult.toString());
+        // dynamo db select list
+        DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        List<Comment> comments = mapper.scan(Comment.class, new DynamoDBScanExpression());
+        System.out.println("comments : " + comments.toString());
 
-
-        return null;
+        // list comments to json string
+        String jsonString = null;
+        try {
+            jsonString = new ObjectMapper().writeValueAsString(comments);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 
     private Comment put(String body) throws JsonProcessingException {
@@ -125,6 +138,14 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         ddb.putItem("Comment", item_values);
 
         return comment;
+    }
+
+    private void delete(String body) {
+        AmazonDynamoDB ddb = _connectDynamoDB();
+
+        Map<String, AttributeValue> item_values = new HashMap<>();
+        // delete from dynamo db table
+        ddb.deleteItem("Comment", item_values);
     }
 
     private AmazonDynamoDB _connectDynamoDB() {
